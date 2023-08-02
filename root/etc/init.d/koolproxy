@@ -14,7 +14,7 @@ CONFIG=koolproxy
 KP_DIR=/usr/share/koolproxy
 TMP_DIR=/tmp
 
-alias echo_date='logget -t koolproxy $(date +%Y年%m月%d日\ %X):'
+alias echo_date='logger -t koolproxy $(date +%Y年%m月%d日\ %X):'
 
 config_n_get() {
 	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
