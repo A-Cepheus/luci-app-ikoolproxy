@@ -14,7 +14,7 @@ CONFIG=koolproxy
 KP_DIR=/usr/share/koolproxy
 TMP_DIR=/tmp
 
-alias echo_date='echo $(date +%Y年%m月%d日\ %X):'
+alias echo_date='logget -t koolproxy $(date +%Y年%m月%d日\ %X):'
 
 config_n_get() {
 	local ret=$(uci get $CONFIG.$1.$2 2>/dev/null)
@@ -33,7 +33,7 @@ add_ipset_conf() {
 		echo_date 添加白名单软连接...
 		cat /etc/adblocklist/adbypass | sed "s/,/\n/g" | sed "s/^/ipset=&\/./g" | sed "s/$/\/white_kp_list/g"  >> /tmp/adbypass.conf
 		rm -rf /tmp/dnsmasq.d/adbypass.conf
-		ln -sf /tmp/adbypass.conf /tmp/dnsmasq.d/adbypass.conf
+		cp /tmp/adbypass.conf /tmp/dnsmasq.d/adbypass.conf
 
 		dnsmasq_restart=1
 	fi
@@ -41,18 +41,18 @@ add_ipset_conf() {
 	if [ "$koolproxy_mode" == "2" ]; then
 		if [ "$koolproxy_host" == "1" ];then
 			echo_date 添加Adblock Plus Host软连接...
-			ln -sf $KP_DIR/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
+			cp $KP_DIR/dnsmasq.adblock /tmp/dnsmasq.d/dnsmasq.adblock
 		fi
 
 		echo_date 添加黑名单软连接...
 		rm -rf /tmp/dnsmasq.d/koolproxy_ipset.conf
-		ln -sf $KP_DIR/koolproxy_ipset.conf /tmp/dnsmasq.d/koolproxy_ipset.conf
+		cp $KP_DIR/koolproxy_ipset.conf /tmp/dnsmasq.d/koolproxy_ipset.conf
 
 		echo_date 添加自定义黑名单软连接...
 		if [ -s /etc/adblocklist/adblock ]; then
 			cat /etc/adblocklist/adblock | sed "s/,/\n/g" | sed "s/^/ipset=&\/./g" | sed "s/$/\/black_koolproxy/g"  >> /tmp/adblock.conf
 			rm -rf /tmp/dnsmasq.d/adblock.conf
-			ln -sf /tmp/adblock.conf /tmp/dnsmasq.d/adblock.conf
+			cp /tmp/adblock.conf /tmp/dnsmasq.d/adblock.conf
 		fi
 
 		dnsmasq_restart=1
